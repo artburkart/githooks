@@ -1,0 +1,8 @@
+#!/usr/bin/env python
+
+# Git pre-commit hook that enforces code consistency in a team environment.
+#
+# Based on Bob Gilmore's <https://github.com/bobgilmore/githooks> work
+# under the MIT License.
+#
+# Arthur Burkart (artburkart@gmail.com)
