@@ -1,0 +1,50 @@
+#!/usr/bin/env python
+
+# Git pre-commit hook that enforces code consistency in a team environment.
+#
+# Based on Bob Gilmore's <https://github.com/bobgilmore/githooks> work
+# under the MIT License.
+#
+# Arthur Burkart (artburkart@gmail.com)
+from checker_results import CheckerResults
+import checkers
+import os
+import re
+from subprocess import check_output
+
+IGNORED_EXTENSIONS = [
+    ".md",
+    ".mmd",
+    ".txt"
+]
+
+res = CheckerResults()
+full_diff = check_output("git diff --cached --".split()).strip()
+
+# Regex matches the file path and the file's associated diff from git diff
+filepath_regex = r"\+\+\+ b\/(.*)\n@@.*"
+changes_regex = r"([\s\S]*?)(?:diff|$)"
+regexp = "{}{}".format(filepath_regex, changes_regex)
+diff_list = re.findall(regexp, full_diff)
+
+for (filepath, diff) in diff_list:
+    if os.path.splitext(filepath)[1] not in IGNORED_EXTENSIONS:
+        changed_file = "\n".join(
+            (ln for ln in diff.split("\n") if ln.startswith("+"))
+        )
+        opts = {
+            "filepath": filepath,
+            "changes": changed_file,
+            "directory": os.path.dirname(filepath)
+        }
+        res.record(checkers.AlertChecker(opts))
+        res.record(checkers.ForbiddenStringChecker(opts))
+        res.record(checkers.PrivateKeyChecker(opts))
+        res.record(checkers.StrictParenSpacingChecker(opts))
+        res.record(checkers.UserHomeChecker(opts))
+filenames = check_output("git diff --cached --name-only".split()).split("\n")
+top_level = check_output("git rev-parse --show-toplevel".split()).strip()
+
+if res.has_errors:
+    print res
+    print "\n\nTo commit anyway, use --no-verify"
