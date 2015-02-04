@@ -1,28 +1,34 @@
+from checker import Checker
+
+
 class CheckerResults:
     def __init__(self):
         self.checkers = []
 
     def __str__(self):
+        end_holder = "\n\n\t\t---------------------GIT-PATROL-----------------\n\n"
         out = ""
         for checker in self.checkers:
-            """
-                TODO(arthurb): I'm not convinced yet that this `has_errors`
-                method call is even necessary. I might remove it.
-            """
-            if checker.has_errors():
-                for msg in checker.messages:
-                    out += "{}\n".format(msg)
-            try:
-                checker.deactivate_message()
-            except AttributeError:
-                out += "{}\n".format(checker.deactivate_message())
+            if checker.messages:
+                out = "{}{}".format(out, end_holder)
+            for msg in checker.messages:
+                out = "{}{}\n".format(out, msg)
+            if checker.messages:
+                try:
+                    dmsg = checker.deactivation_message
+                    out = "{}{}".format(out, dmsg)
+                except AttributeError:
+                    pass
         return out
 
-    def record(self, checker):
-        self.checkers.append(checker)
-
+    @property
     def has_errors(self):
-        return any(map(lambda c: c.has_errors(), self.checkers))
+        return any(map(lambda c: c.has_errors, self.checkers))
 
-    def checkers(self):
-        return self.checkers
+    def record(self, checker):
+        if isinstance(checker, Checker):
+            self.checkers.append(checker)
+        elif isinstance(checker, list):
+            for c in checker:
+                if c not in self.checkers:
+                    self.checkers.append(c)
