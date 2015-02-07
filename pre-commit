@@ -6,3 +6,68 @@
 # under the MIT License.
 #
 # Arthur Burkart (artburkart@gmail.com)
+from gitpatrol.checker_results import CheckerResults
+import gitpatrol.checkers as checkers
+from gitpatrol.colors import Colors
+import os
+import re
+from subprocess import check_output
+
+CONFIG = [
+    checkers.AlertChecker,
+    checkers.ForbiddenStringChecker,
+    checkers.PrivateKeyChecker,
+    checkers.StrictParenSpacingChecker,
+    checkers.UserHomeChecker
+]
+
+IGNORED_EXTENSIONS = [
+    ".md",
+    ".mmd",
+    ".txt"
+]
+
+res = CheckerResults()
+full_diff = check_output("git diff --cached --".split()).strip()
+
+# Regex matches the file path and the file's associated diff from git diff
+filepath_regex = r"\+\+\+ b\/(.*)\n@@.*"
+changes_regex = r"([\s\S]*?)(?:diff|$)"
+regexp = "{}{}".format(filepath_regex, changes_regex)
+diff_list = re.findall(regexp, full_diff)
+
+for (filepath, diff) in diff_list:
+    if os.path.splitext(filepath)[1] not in IGNORED_EXTENSIONS:
+        changed_file = "\n".join(
+            (ln for ln in diff.split("\n") if ln.startswith("+"))
+        )
+        opts = {
+            "filepath": filepath,
+            "changes": changed_file,
+            "directory": os.path.dirname(filepath)
+        }
+        # Record all checkers for file
+        res.record([c(opts) for c in CONFIG])
+filenames = check_output("git diff --cached --name-only".split()).split("\n")
+top_level = check_output("git rev-parse --show-toplevel".split()).strip()
+
+if res.has_errors:
+    header = (
+        "{0}\n\t\t--------------------------{1}"
+        "{2}\n\t\tGIT PATROL IS WATCHING YOU{1}"
+        "{0}\n\t\t--------------------------{1}"
+        "\n"
+    ).format(Colors.FAIL, Colors.ENDC, Colors.OKBLUE)
+    print header + str(res)
+    checkername = "{}checkername{}".format(Colors.DIM, Colors.ENDC)
+    print """{0}Helpful hints:{1}
+
+        gitpatrol enable {2}
+        gitpatrol disable {2}
+        gitpatrol tempenable {2}
+        gitpatrol tempdisable {2}
+
+The relevant {2} appears in parentheses following each error message.
+You can use sane flags like `-e`, `-d`, `-te`, and `-td`.
+Run `gitpatrol -d helpfulhints` to disable this hint message.
+    """.format(Colors.BOLD, Colors.ENDC, checkername)
