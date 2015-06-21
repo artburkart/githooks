@@ -1,0 +1,7 @@
+*.pyc
+venv/
+activate
+.DS_Store
+cover
+.coverage
+!.gitkeep

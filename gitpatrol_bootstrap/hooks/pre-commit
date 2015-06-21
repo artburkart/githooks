@@ -1,0 +1,36 @@
+#!/usr/bin/env python
+
+import os
+import subprocess
+from sys import exit
+
+# Fire git command to get symlink source repo
+# cmd = "git config hooks.symlinksourcerepo".split()
+SYMLINK_SOURCE_REPO = subprocess.Popen(
+    "git config hooks.symlinksourcerepo",
+    shell=True,
+    stdout=subprocess.PIPE).stdout.read().strip()
+
+# Check if the symlink source repo exists
+has_length = bool(SYMLINK_SOURCE_REPO)
+is_dir = os.path.isdir(SYMLINK_SOURCE_REPO)
+is_link = os.path.islink(SYMLINK_SOURCE_REPO)
+repo_exists = has_length and (is_dir or is_link)
+if repo_exists:
+    bin_dir = os.path.abspath(os.path.dirname(
+        os.path.realpath(__file__)) + "../../../bin/")
+    cmd = "{}/install_hook_symlinks.sh {}".format(SYMLINK_SOURCE_REPO, bin_dir)
+    message = """
+Your commit failed because Git Patrol was just installed.
+No worries though, your next commit should be fine... unless
+GITPATROL IS WATCHING YOU!
+"""
+else:
+    message = """
+Something is wrong with the gitpatrol installer.
+More info is available at https://github.com/artburkart/gitpatrol
+@artburkart
+"""
+
+print message
+exit(1)

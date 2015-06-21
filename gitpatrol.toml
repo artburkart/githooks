@@ -1,0 +1,21 @@
+[checkers.default]
+forbidden = ['>>>>>>', '<<<<<<', '====']
+ignore = [".md", ".mmd", ".txt", ".rst"]
+enabled = false
+
+[checkers.alerts]
+forbidden = ['alert']
+check = [".js"]
+enabled = true
+
+[checkers.strictparenspacing]
+forbidden = ['\([ \t]+[^\s]',
+  '[^\s][ \t]+\)',
+  '\[[ \t]+[^\s]',
+  '[^\s][ \t]+\]']
+ignore = [".sh", ".bash", ""]
+enabled = true
+
+[checkers.privatekey]
+forbidden = ["PRIVATE KEY", "ssh-rsa"]
+enabled = true
