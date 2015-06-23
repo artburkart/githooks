@@ -88,12 +88,12 @@ class TestCheckerResults(TestCase):
 
         # Record second checker
         checker2 = Checker({
-            "key": "alert",
-            "forbidden": ["alert"],
+            "key": "whatever",
+            "forbidden": ["whatever"],
             "check": [".js"],
             "directory": "/usr/local",
-            "filepath": "bleep.js",
-            "changes": "alert(5); var veggieBurgers = 'yummy';",
+            "filepath": "fizzbuzz.js",
+            "changes": "console(5); var whatever = 'yummy';",
             "enabled": True
         })
         self.res.record(checker2)
@@ -106,9 +106,7 @@ class TestCheckerResults(TestCase):
             "\n\x1b[91m****\x1b[0m \x1b[1mfizzbuzz.js"
             "\x1b[0m \x1b[91m****\x1b[0m"
             "\n\"alert\" found, but not allowed (alert)."
-            "\n\n\x1b[91m****\x1b[0m \x1b[1mbleep.js"
-            "\x1b[0m \x1b[91m****\x1b[0m"
-            "\n\"alert\" found, but not allowed (alert).\n\n"
+            "\n\"whatever\" found, but not allowed (whatever).\n\n"
             "You can disable the checkers in the gitpatrol.toml file, or you\n"
             "can completely disable Git Patrol for this commit by running \n"
             "`git commit --no-verify`.\n\n"

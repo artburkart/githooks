@@ -15,7 +15,7 @@ with open(path.join(here, "README.rst"), encoding="utf-8") as f:
 
 setup(
     name="gitpatrol",
-    version="0.0.1",
+    version="0.0.2",
     description="Flexible Git Pre-Commit Hooks",
     long_description=long_description,
     keywords="git development version control gitpatrol patrol",
