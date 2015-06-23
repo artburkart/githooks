@@ -1,52 +1,50 @@
-==========
 Git Patrol
 ==========
 
 The goal is to create a plug and play git pre-commit hook that completes
-a bunch of basic checks, but also lints each file with its language's
+a bunch of basic checks, but also lints each file with its language’s
 respective linter.
 
-Deeply inspired by Bob Gilmore's
-`githooks <https://travis-ci.org/bobgilmore/githooks>`__
+Deeply inspired by Bob Gilmore’s `githooks`_
 
-To Install:
-``pip install gitpatrol``
+Installation:
+=============
 
-Git Patrol API
-==============
-## NOTE: None of the CLI has been implemented yet. It's in the pipeline! For now, all you can do is run ``gitpatrol`` or ``gitpatrol install`` to install Git Patrol into a repo.
+1.  ``pip install gitpatrol``
+2.  ``cd {location/of/your/repo}``
+3.  ``gitpatrol init``
+4.  Add a ``gitpatrol.toml`` file to root folder (samples are `here`_)
+5.  Make some changes to some files in your repo that do not respect the
+    checkers in your ``gitpatrol.toml`` file
+6.  Stage your changes for commit
+7.  ``git commit``
+8.  You should get output that looks like this: |Git Patrol output|
+9.  The value in quotations marks at the beginning of each line is the
+    offending character sequence, which your checker found
+10. The values in parentheses reference the checkers defined in the
+    ``gitpatrol.toml`` file, which have found a problem with your commit
+11. Your commit will be blocked until the checkers are happy (or you
+    disable them)
 
-gitpatrol.hooks.{hookname}.enabled
-gitpatrol.hooks.{hookname}.tempenabled
-gitpatrol.hooks.{hookname}.tempdisabled
+Development
+===========
 
-I want to enable a hook forever I want to disable a hook forever
-``gitpatrol.hooks.{hookname}.enabled {true/false}``
-
-I want to enable a hook for the duration of one commit
-``gitpatrol.hooks.{hookname}.tempenabled {true/false}``
-
-I want to disable a hook for the duration of one commit
-``gitpatrol.hooks.{hookname}.tempdisabled {true/false}``
-
-I want to *permanently* ignore a file or directory for a hook
-``gitpatrol.hooks.{hookname}.ignore {filepath/directory/regular expression}``
-
-I want to ignore multiple files /andor directories permanently for a
-hook ``gitpatrol.hooks.{hookname}.ignore {file1,directory2}``
-
-Same rules of ignore apply for tempignore, except tempignore resets
-after next commit \`gitpatrol.hooks.{hookname}.tempignore file1
-
-Just use 'all' for ignoring and temp ignoring files and directories
-``gitpatrol.hooks.all.{ignore/tempignore} {file1/directory1/file1,directory1/regex1,regex2}``
+I would love it if you used the Issue Tracker to notify me of PRs you’d
+like to contribute to this project. There are a couple things I’d like
+to implement next. You can see them in the `TODO.md`_
 
 To run tests
 ============
 
-``nosetests`` from the root directory
+1. Clone the project from its `GitHub repo`_
+2. ``pip install -r dev-requirements``
+3. ``nosetests``
+4. ``nosetests --with-coverage --cover-html --cover-branches`` (runs
+   with coverage)
 
-To run tests with coverage
-==========================
+.. _githooks: https://travis-ci.org/bobgilmore/githooks
+.. _here: https://github.com/artburkart/gitpatrol/tree/master/example_configs
+.. _TODO.md: ./TODO.md
+.. _GitHub repo: https://github.com/artburkart/gitpatrol
 
-``nosetests --with-coverage --cover-html --cover-branches``
+.. |Git Patrol output| image:: ./gitpatrol_output.png

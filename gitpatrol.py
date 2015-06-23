@@ -90,8 +90,8 @@ def main():
     except CalledProcessError:
         exit(1)
 
-    # If we're installing, then do the installation magic
-    if (len(sys.argv) == 2 and sys.argv[1] == 'install'):
+    # If we're initializing, then do the installation magic
+    if (len(sys.argv) == 2) and (sys.argv[1] in ["init", "install"]):
         install(top_lvl, "/.git/hooks")
 
     # If there are no changes to any of the files, then there is no
