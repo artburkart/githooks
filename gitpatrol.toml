@@ -1,7 +1,7 @@
 [checkers.default]
 forbidden = ['>>>>>>', '<<<<<<', '====']
 ignore = [".md", ".mmd", ".txt", ".rst"]
-enabled = false
+enabled = true
 
 [checkers.alerts]
 forbidden = ['alert']
